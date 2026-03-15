@@ -90,7 +90,16 @@ function! H_UploadFile()
       endif
     endif
 
-    execute '!' . cmd
+    let output = system(cmd)
+    let filename = fnamemodify(conf['localpath'], ':t')
+
+    if v:shell_error == 0 && output =~# '100%'
+      echo printf('Upload succeeded: %s', filename)
+    else
+      echohl ErrorMsg
+      echo printf('Upload failed: %s', filename)
+      echohl None
+    endif
   else
     echo 'Could not find .hsftp config file'
   endif
